@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mr. Tamer Science Exams</title>
+  <title>Mr. Tamer Science — Teacher Hub</title>
 
   <style>
     body {
@@ -15,13 +15,13 @@
     }
 
     .container {
-      max-width: 700px;
+      max-width: 800px;
       margin: auto;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .subtitle {
@@ -40,25 +40,50 @@
 
     .exam h2 {
       margin-top: 0;
-      font-size: 20px;
+      margin-bottom: 8px;
+      font-size: 21px;
     }
 
     .exam p {
       color: #666;
+      margin-bottom: 18px;
     }
 
     .button {
       display: inline-block;
-      background: #122b52;
+      border: none;
       color: white;
       text-decoration: none;
-      padding: 12px 20px;
+      padding: 11px 18px;
       border-radius: 8px;
       font-weight: bold;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
     }
 
-    .button:hover {
+    .open {
+      background: #122b52;
+    }
+
+    .open:hover {
       background: #0b1f3a;
+    }
+
+    .copy {
+      background: #f47b20;
+    }
+
+    .copy:hover {
+      background: #d96512;
+    }
+
+    .message {
+      display: block;
+      margin-top: 8px;
+      color: #16803c;
+      font-size: 14px;
+      min-height: 18px;
     }
   </style>
 </head>
@@ -67,24 +92,71 @@
 
   <div class="container">
 
-    <h1>Mr. Tamer Science Exams</h1>
+    <h1>Mr. Tamer Science</h1>
 
     <div class="subtitle">
-      Online Science Exams
+      Teacher Exam Hub
     </div>
 
     <div class="exam">
+
       <h2>Structure of the Atom</h2>
-      <p>Prep 1 – Unit 1 – Lesson 1</p>
+
+      <p>
+        Prep 1 – Unit 1 – Lesson 1
+      </p>
 
       <a
-        class="button"
-        href="Prep1_Unit_01_Lesson_1_Structure_of_the_Atom_Part_1.html">
-        Start Exam
+        class="button open"
+        href="./Prep1_Unit_01_Lesson_1_Structure_of_the_Atom_Part_1.html">
+        Open Exam
       </a>
+
+      <button
+        class="button copy"
+        onclick="copyExamLink(
+          'Prep1_Unit_01_Lesson_1_Structure_of_the_Atom_Part_1.html',
+          this
+        )">
+        Copy Student Link
+      </button>
+
+      <span class="message"></span>
+
     </div>
 
   </div>
+
+  <script>
+
+    function copyExamLink(fileName, button) {
+
+      const link =
+        window.location.origin +
+        window.location.pathname.replace(/\/$/, '') +
+        '/' +
+        fileName;
+
+      navigator.clipboard.writeText(link).then(function () {
+
+        const message =
+          button.parentElement.querySelector('.message');
+
+        message.textContent =
+          'Student link copied successfully!';
+
+        setTimeout(function () {
+          message.textContent = '';
+        }, 2500);
+
+      }).catch(function () {
+
+        alert('Could not copy the link automatically.');
+
+      });
+    }
+
+  </script>
 
 </body>
 </html>
