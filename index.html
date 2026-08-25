@@ -1,162 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mr. Tamer Science — Teacher Hub</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f4f7;
-      margin: 0;
-      padding: 30px 15px;
-      color: #122b52;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 30px;
-    }
-
-    .exam {
-      background: white;
-      padding: 22px;
-      margin-bottom: 18px;
-      border-radius: 12px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    }
-
-    .exam h2 {
-      margin-top: 0;
-      margin-bottom: 8px;
-      font-size: 21px;
-    }
-
-    .exam p {
-      color: #666;
-      margin-bottom: 18px;
-    }
-
-    .button {
-      display: inline-block;
-      border: none;
-      color: white;
-      text-decoration: none;
-      padding: 11px 18px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-right: 8px;
-      margin-bottom: 8px;
-    }
-
-    .open {
-      background: #122b52;
-    }
-
-    .open:hover {
-      background: #0b1f3a;
-    }
-
-    .copy {
-      background: #f47b20;
-    }
-
-    .copy:hover {
-      background: #d96512;
-    }
-
-    .message {
-      display: block;
-      margin-top: 8px;
-      color: #16803c;
-      font-size: 14px;
-      min-height: 18px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. Tamer Science — Teacher Hub</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f2f4f7;margin:0;padding:25px 15px;color:#122b52}.container{max-width:900px;margin:auto}h1{text-align:center;margin:5px 0 8px}.subtitle{text-align:center;color:#666;margin-bottom:25px}.status{background:white;padding:14px 18px;border-radius:10px;margin-bottom:18px;color:#555;box-shadow:0 3px 12px rgba(0,0,0,.06)}.exam{background:white;padding:20px;margin-bottom:14px;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.08)}.exam h2{margin:0 0 8px;font-size:19px}.filename{color:#777;font-size:13px;word-break:break-word;margin-bottom:16px}.button{display:inline-block;border:none;color:white;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:pointer;margin-right:7px;margin-bottom:7px}.open{background:#122b52}.copy{background:#f47b20}.message{display:block;margin-top:4px;color:#16803c;font-size:13px;min-height:17px}.error{color:#b42318}
+</style>
 </head>
-
 <body>
-
-  <div class="container">
-
-    <h1>Mr. Tamer Science</h1>
-
-    <div class="subtitle">
-      Teacher Exam Hub
-    </div>
-
-    <div class="exam">
-
-      <h2>Structure of the Atom</h2>
-
-      <p>
-        Prep 1 – Unit 1 – Lesson 1
-      </p>
-
-      <a
-        class="button open"
-        href="./Prep1_Unit_01_Lesson_1_Structure_of_the_Atom_Part_1.html">
-        Open Exam
-      </a>
-
-      <button
-        class="button copy"
-        onclick="copyExamLink(
-          'Prep1_Unit_01_Lesson_1_Structure_of_the_Atom_Part_1.html',
-          this
-        )">
-        Copy Student Link
-      </button>
-
-      <span class="message"></span>
-
-    </div>
-
-  </div>
-
-  <script>
-
-    function copyExamLink(fileName, button) {
-
-      const link =
-        window.location.origin +
-        window.location.pathname.replace(/\/$/, '') +
-        '/' +
-        fileName;
-
-      navigator.clipboard.writeText(link).then(function () {
-
-        const message =
-          button.parentElement.querySelector('.message');
-
-        message.textContent =
-          'Student link copied successfully!';
-
-        setTimeout(function () {
-          message.textContent = '';
-        }, 2500);
-
-      }).catch(function () {
-
-        alert('Could not copy the link automatically.');
-
-      });
-    }
-
-  </script>
-
+<div class="container">
+<h1>Mr. Tamer Science</h1>
+<div class="subtitle">Teacher Exam Hub</div>
+<div id="status" class="status">Loading exams...</div>
+<div id="examList"></div>
+</div>
+<script>
+const OWNER="chemist-tamerabdelhakam-star", REPO="Science-Exams", BRANCH="main";
+const PAGES_BASE=`https://${OWNER}.github.io/${REPO}/`;
+const API_URL=`https://api.github.com/repos/${OWNER}/${REPO}/contents/?ref=${BRANCH}`;
+function prettyName(n){return n.replace(/\.html$/i,"").replace(/_Part_\d+$/i,"").replace(/_/g," ").replace(/\bPrep(\d+)\b/i,"Prep $1").replace(/\bUnit_(\d+)\b/i,"Unit $1").replace(/\bLesson_(\d+)\b/i,"Lesson $1")}
+function sortKey(n){const m=n.match(/Prep(\d+).*?Unit_(\d+).*?Lesson_(\d+)/i);return m?String(m[1]).padStart(3,"0")+String(m[2]).padStart(3,"0")+String(m[3]).padStart(3,"0")+n:"999999"+n}
+function escapeHtml(t){return t.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+async function loadExams(){
+const status=document.getElementById("status"), list=document.getElementById("examList");
+try{
+const r=await fetch(API_URL,{headers:{Accept:"application/vnd.github+json"}}); if(!r.ok) throw new Error(r.status);
+const files=await r.json();
+const exams=files.filter(x=>x.type==="file"&&/\.html$/i.test(x.name)&&x.name.toLowerCase()!=="index.html").sort((a,b)=>sortKey(a.name).localeCompare(sortKey(b.name)));
+list.innerHTML="";
+if(!exams.length){status.textContent="No exam files found.";return}
+status.textContent=`${exams.length} exam${exams.length===1?"":"s"} found.`;
+exams.forEach(file=>{
+const link=PAGES_BASE+encodeURIComponent(file.name).replace(/%2F/g,"/");
+const card=document.createElement("div"); card.className="exam";
+card.innerHTML=`<h2>${escapeHtml(prettyName(file.name))}</h2><div class="filename">${escapeHtml(file.name)}</div><a class="button open" href="${link}">Open Exam</a><button class="button copy">Copy Student Link</button><span class="message"></span>`;
+const button=card.querySelector(".copy"), msg=card.querySelector(".message");
+button.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(link);msg.textContent="Student link copied successfully.";setTimeout(()=>msg.textContent="",2500)}catch{msg.textContent="Copy failed. Long-press the Open Exam link and copy it.";msg.className="message error"}});
+list.appendChild(card);
+});
+}catch(e){status.className="status error";status.textContent="Could not load the exam list. Please check your internet connection."}
+}
+loadExams();
+</script>
 </body>
 </html>
